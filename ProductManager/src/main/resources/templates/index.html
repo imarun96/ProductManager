@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="ISO-8859-1">
+<title>ABC Hospital</title>
+</head>
+<body>
+	<div align="center">
+		<div sec:authorize="isAuthenticated()">
+			Welcome <b><span sec:authentication="name">Username</span></b> &nbsp;
+			<i><span sec:authentication="principal.authorities">Roles</span></i>
+		</div>
+
+		<form th:action="@{/logout}" method="post">
+			<input type="submit" value="Logout" />
+		</form>
+
+		<h1>ABC Hospital</h1>
+		<div sec:authorize="hasAnyAuthority('CREATOR', 'ADMIN')">
+			<a href="new">Create New Patient Entry</a>
+		</div>
+
+		<br /> <br />
+		<table border="1" cellpadding="10">
+			<thead>
+				<tr>
+					<th>Patient ID</th>
+					<th>Patient Name</th>
+					<th sec:authorize="hasAnyAuthority('ADMIN', 'EDITOR')">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="patient : ${patients}">
+					<td th:text="${patient.patient_id}">Product ID</td>
+					<td th:text="${patient.name}">Name</td>
+					<td sec:authorize="hasAnyAuthority('ADMIN', 'EDITOR')"><a
+						sec:authorize="hasAuthority('ADMIN')"
+						th:href="@{'/delete/' + ${patient.patient_id}}">Delete</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
